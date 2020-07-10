@@ -17,7 +17,6 @@ package storage
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"reflect"
 	"time"
 
@@ -165,9 +164,6 @@ func (b *BucketHandle) Attrs(ctx context.Context) (attrs *BucketAttrs, err error
 		resp, err = req.Context(ctx).Do()
 		return err
 	})
-	if e, ok := err.(*googleapi.Error); ok && e.Code == http.StatusNotFound {
-		return nil, ErrBucketNotExist
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -1169,9 +1165,6 @@ func (it *ObjectIterator) fetch(pageSize int, pageToken string) (string, error) 
 		return err
 	})
 	if err != nil {
-		if e, ok := err.(*googleapi.Error); ok && e.Code == http.StatusNotFound {
-			err = ErrBucketNotExist
-		}
 		return "", err
 	}
 	for _, item := range resp.Items {

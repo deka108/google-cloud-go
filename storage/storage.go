@@ -806,9 +806,6 @@ func (o *ObjectHandle) Attrs(ctx context.Context) (attrs *ObjectAttrs, err error
 	var obj *raw.Object
 	setClientHeader(call.Header())
 	err = runWithRetry(ctx, func() error { obj, err = call.Do(); return err })
-	if e, ok := err.(*googleapi.Error); ok && e.Code == http.StatusNotFound {
-		return nil, ErrObjectNotExist
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -902,9 +899,6 @@ func (o *ObjectHandle) Update(ctx context.Context, uattrs ObjectAttrsToUpdate) (
 	var obj *raw.Object
 	setClientHeader(call.Header())
 	err = runWithRetry(ctx, func() error { obj, err = call.Do(); return err })
-	if e, ok := err.(*googleapi.Error); ok && e.Code == http.StatusNotFound {
-		return nil, ErrObjectNotExist
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -967,9 +961,7 @@ func (o *ObjectHandle) Delete(ctx context.Context) error {
 	case nil:
 		return nil
 	case *googleapi.Error:
-		if e.Code == http.StatusNotFound {
-			return ErrObjectNotExist
-		}
+		return e
 	}
 	return err
 }

@@ -154,7 +154,7 @@ func (o *ObjectHandle) NewRangeReader(ctx context.Context, offset, length int64)
 			}
 			if res.StatusCode == http.StatusNotFound {
 				res.Body.Close()
-				return ErrObjectNotExist
+				return err
 			}
 			if res.StatusCode < 200 || res.StatusCode > 299 {
 				body, _ := ioutil.ReadAll(res.Body)
